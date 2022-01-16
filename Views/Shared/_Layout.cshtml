@@ -1,0 +1,79 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta charset="utf-8">
+    <title>@ViewBag.Title</title>
+
+    <!-- Stylesheets -->
+    <link href="/css/bootstrap.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+    <link href="/css/responsive.css" rel="stylesheet">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="shortcut icon" href="/images/favicon.png" type="image/x-icon">
+    <link rel="icon" href="/images/favicon.png" type="image/x-icon">
+
+    <!-- Responsive -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    @await RenderSectionAsync("Styles", false)
+</head>
+<body class="hidden-bar-wrapper">
+<div class="page-wrapper">
+    <div class="preloader">
+        <span></span>
+    </div>
+    <partial name="_Header"/>
+    <partial name="_Sidebar"/>
+
+    @RenderBody()
+
+    <partial name="_Footer"/>
+</div>
+
+<div class="search-popup">
+    <div class="color-layer"></div>
+    <button class="close-search">
+        <span class="fa fa-arrow-up"></span>
+    </button>
+    <form method="post" action="blog.html">
+        <div class="form-group">
+            <input type="search" name="search-field" value="" placeholder="Search Here" required="">
+            <button type="submit">
+                <i class="fa fa-search"></i>
+            </button>
+        </div>
+    </form>
+</div>
+<div class="scroll-to-top scroll-to-target" data-target="html">
+    <span class="fa fa-arrow-up"></span>
+</div>
+
+<script src="/js/jquery.js"></script>
+<script src="/js/popper.min.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="/js/jquery.fancybox.js"></script>
+<script src="/js/appear.js"></script>
+<script src="/js/parallax.min.js"></script>
+<script src="/js/tilt.jquery.min.js"></script>
+<script src="/js/jquery.paroller.min.js"></script>
+<script src="/js/owl.js"></script>
+<script src="/js/wow.js"></script>
+<script src="/js/nav-tool.js"></script>
+<script src="/js/jquery-ui.js"></script>
+<script src="/js/script.js" asp-append-version="true"></script>
+@{
+    if (ViewData["active"] != null)
+    {
+        <script type="text/javascript">
+        document.getElementById("@ViewData["active"]").classList.add("current");
+        </script>
+    }
+}
+@await RenderSectionAsync("Scripts", false)
+</body>
+</html>

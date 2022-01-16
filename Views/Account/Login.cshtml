@@ -1,0 +1,58 @@
+﻿@model AccountLoginVM
+@{
+    ViewBag.Title = "Login";
+}
+
+<section class="contact-page-section">
+    <div class="auto-container">
+
+        <!-- Contact Form Box -->
+        <div class="contact-form-box">
+            <!-- Form Title Box -->
+            <div class="form-title-box">
+                <h3>Login Now</h3>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form">
+                <form method="post">
+                    <div class="row clearfix">
+                        <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                            <input asp-for="EmailAddress" placeholder="Email Address">
+                            <span class="text-danger" asp-validation-for="EmailAddress"></span>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                            <input placeholder="Password" asp-for="Password">
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-lg-12 col-md-12 col-sm-12 form-group text-center">
+                            <button class="theme-btn btn-style-four" type="submit" name="submit-form">
+                                <span class="txt">Login Now</span>
+                            </button>
+                            <br>
+                            <br>
+                            <a class="pt-4" asp-protocol="@Context.Request.Scheme" asp-action="Register">
+                                Sign Up
+                            </a>
+
+                            @if (!ViewData.ModelState.IsValid)
+                            {
+                                <div asp-validation-summary="All" class="alert alert-danger mt-2"></div>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+        <!-- End Contact Form Box -->
+
+    </div>
+</section>
+
+@section Scripts
+{
+    <partial name="_Validate"/>
+}
