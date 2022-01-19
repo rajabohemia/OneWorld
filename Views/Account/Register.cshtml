@@ -1,6 +1,7 @@
 ﻿@model AccountRegisterVM
 @{
     ViewBag.Title = "title";
+    var color = (ViewData["color"] != null) ? "alert-success" : "alert-danger";
 }
 
 <section class="contact-page-section">
@@ -38,7 +39,7 @@
 
                             @if (!ViewData.ModelState.IsValid)
                             {
-                                <div asp-validation-summary="All" class="alert alert-danger mt-2"></div>
+                                <div asp-validation-summary="All" class="alert @color mt-2"></div>
                             }
                         </div>
                     </div>

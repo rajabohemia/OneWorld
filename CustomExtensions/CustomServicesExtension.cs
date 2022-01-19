@@ -17,6 +17,8 @@ namespace OneWorld.CustomExtensions
 
             services.AddScoped<IRefreshTokenRepo, RefreshTokenRepo>();
             services.AddScoped<IAccountRepo, AccountRepo>();
+            services.AddScoped<IEmailRepo, EmailRepo>();
+            services.AddScoped<IExternalLogin, ExternalLogin>();
         }
     }
 }

@@ -17,6 +17,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
+using NToastNotify;
 using OneWorld.CustomExtensions;
 using OneWorld.Middlewares;
 using OneWorld.Models;
@@ -73,6 +74,11 @@ namespace OneWorld
                     options.SerializerSettings.ContractResolver = new DefaultContractResolver();
                     options.SerializerSettings.Formatting = Formatting.Indented;
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                }).AddNToastNotifyToastr(new ToastrOptions
+                {
+                    CloseButton = true,
+                    PositionClass = ToastPositions.TopRight,
+                    ProgressBar = true
                 });
             services.AddServices(Configuration);
         }
@@ -100,7 +106,7 @@ namespace OneWorld
 
             app.UseMiddleware<RefreshTokenMiddleware>();
             app.UseMiddleware<AuthHeaderMiddleware>();
-            
+
             app.UseAuthentication();
             app.UseAuthorization();
 

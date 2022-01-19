@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -33,6 +34,16 @@ namespace OneWorld.CustomExtensions
                     ValidIssuer = jwtConfig.Iss,
                     IssuerSigningKey = jwtConfig.SymmetricSecurityKey
                 };
+            }).AddGoogle(options =>
+            {
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.ClientId = Configuration["Authentication:Google:ClientId"];
+                options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+            }).AddFacebook(options =>
+            {
+                options.SignInScheme = IdentityConstants.ExternalScheme;
+                options.AppId = Configuration["Authentication:Facebook:AppId"];
+                options.AppSecret = Configuration["Authentication:Facebook:AppSecret"];
             });
         }
     }

@@ -1,6 +1,9 @@
-﻿@model AccountLoginVM
+﻿@using Microsoft.AspNetCore.Identity
+@model AccountLoginVM
+@inject SignInManager<ApplicationUser> _signInManager
 @{
     ViewBag.Title = "Login";
+    var providers = await _signInManager.GetExternalAuthenticationSchemesAsync();
 }
 
 <section class="contact-page-section">
@@ -11,6 +14,18 @@
             <!-- Form Title Box -->
             <div class="form-title-box">
                 <h3>Login Now</h3>
+            </div>
+            <div class="row">
+                @foreach (var provider in providers)
+                {
+                    <form asp-action="ExternalLogin" method="post" asp-route-ReturnUrl="@Context.Request.Query["ReturnUrl"]">
+                        <div class="col-6">
+                            <button class="theme-btn btn-style-five " type="submit" value="@provider.Name" name="provider">
+                                <span class="txt">@provider.DisplayName</span>
+                            </button>
+                        </div>
+                    </form>
+                }
             </div>
 
             <!-- Contact Form -->
@@ -51,8 +66,17 @@
 
     </div>
 </section>
+@section Styles
+{
+    <style>
+        .toast-top-right{
+        padding-top: 120px;
+        }
+    </style>
+}
 
 @section Scripts
 {
+    @await Component.InvokeAsync("NToastNotify")
     <partial name="_Validate"/>
 }

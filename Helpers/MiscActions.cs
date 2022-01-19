@@ -3,6 +3,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using OneWorld.DTO;
 
 namespace OneWorld.Helpers
 {
@@ -20,5 +22,39 @@ namespace OneWorld.Helpers
             var jsonObj = JsonSerializer.Serialize(obj);
             return new StringContent(jsonObj, Encoding.UTF8, "application/json");
         }
+
+        public static string Encode64(string stringToEncode)
+        {
+            var stringBytes = Encoding.UTF8.GetBytes(stringToEncode);
+            return Convert.ToBase64String(stringBytes);
+        }
+
+        public static DecodeResult Decode64(string stringToDecode)
+        {
+            try
+            {
+                var encodedBytes = Convert.FromBase64String(stringToDecode);
+                var decodedString = Encoding.UTF8.GetString(encodedBytes);
+                return new DecodeResult(true) {DecodedString = decodedString};
+            }
+            catch (Exception e)
+            {
+                return new DecodeResult() {Errors = new[] {"Invalid Strings to Convert."}};
+            }
+        }
+    }
+
+    public class DecodeResult : BaseErrorSuccess
+    {
+        public DecodeResult()
+        {
+        }
+
+        public DecodeResult(bool succees)
+        {
+            Success = succees;
+        }
+
+        public string DecodedString { get; set; }
     }
 }

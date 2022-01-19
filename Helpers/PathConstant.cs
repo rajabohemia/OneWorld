@@ -17,7 +17,9 @@ namespace OneWorld.Helpers
         public static class ApiPath
         {
             public const string Login = "Account/Login";
+            public const string Register = "Account/Register";
             public const string RefreshToken = "Account/RefreshToken";
+            public const string ConfirmEmail = "Account/ConfirmEmail";
         }
         
         public static class cookies

@@ -4,10 +4,13 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OneWorld.Configurations;
+using OneWorld.DTO;
 using OneWorld.DTO.Request;
 using OneWorld.DTO.Response;
 using OneWorld.Helpers;
@@ -24,13 +27,17 @@ namespace OneWorld.Services
         private readonly JWTConfiguration _jwtConfiguration;
         private readonly CookieConfiguration _cookieConfiguration;
         private readonly IRefreshTokenRepo _refreshTokenRepo;
+        private readonly LinkGenerator _linkGenerator;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public AccountRepo(ILogger<AccountRepo> logger,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             JWTConfiguration jwtConfiguration,
             CookieConfiguration cookieConfiguration,
-            IRefreshTokenRepo refreshTokenRepo)
+            IRefreshTokenRepo refreshTokenRepo,
+            LinkGenerator linkGenerator,
+            IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _userManager = userManager;
@@ -38,6 +45,8 @@ namespace OneWorld.Services
             _jwtConfiguration = jwtConfiguration;
             _cookieConfiguration = cookieConfiguration;
             _refreshTokenRepo = refreshTokenRepo;
+            _linkGenerator = linkGenerator;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<AccountLoginResponse> LoginAsync(AccountLoginVM model)
@@ -124,7 +133,50 @@ namespace OneWorld.Services
             }
         }
 
-        private async Task<AccountLoginResponse> GenerateJWTTokenAsync(ApplicationUser user)
+        public async Task<AccountRegisterResult> RegisterAsync(AccountRegisterVM model)
+        {
+            var userExist = await _userManager.FindByEmailAsync(model.EmailAddress);
+            if (userExist is not null)
+                return new AccountRegisterResult() {Errors = new[] {"User Already Exist. Please Login."}};
+
+            var user = new ApplicationUser
+            {
+                UserName = model.EmailAddress,
+                Email = model.EmailAddress
+            };
+
+            var userCreated = await _userManager.CreateAsync(user, model.Password);
+            if (!userCreated.Succeeded)
+                return new AccountRegisterResult() {Errors = userCreated.Errors.Select(x => x.Description)};
+
+            var addUserRole = await _userManager.AddToRoleAsync(user, ApplicationRoles.User.ToString());
+            if (!addUserRole.Succeeded)
+                return new AccountRegisterResult() {Errors = addUserRole.Errors.Select(x => x.Description)};
+
+            var emailVerificationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var encodedToken = MiscActions.Encode64(emailVerificationToken);
+            var confirmationUrl = _linkGenerator.GetUriByAction(_httpContextAccessor.HttpContext, "ConfirmEmail",
+                "Account", new {token = encodedToken, email = model.EmailAddress, area = ""},
+                _httpContextAccessor.HttpContext.Request.Scheme);
+
+            return new AccountRegisterResult(true) {EmailVerificationUrl = confirmationUrl};
+        }
+
+        public async Task<BaseErrorSuccess> ConfirmEmailAsync(string email, string base64Token)
+        {
+            var token = MiscActions.Decode64(base64Token);
+            if (!token.Success)
+                return new BaseErrorSuccess() {Errors = new[] {"Bad Token"}};
+
+            var user = await _userManager.FindByEmailAsync(email);
+            if (user is null)
+                return new BaseErrorSuccess() {Errors = new[] {"Invalid Email Address"}};
+
+            var result = await _userManager.ConfirmEmailAsync(user, token.DecodedString);
+            return !result.Succeeded ? new DecodeResult() {Errors = new[] {"Invalid Token."}} : new DecodeResult(true);
+        }
+
+        public async Task<AccountLoginResponse> GenerateJWTTokenAsync(ApplicationUser user)
         {
             var userRoles = await _userManager.GetRolesAsync(user);
             var claimsList = new List<Claim>()
