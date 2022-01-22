@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using OneWorld.Configurations;
@@ -29,6 +30,7 @@ namespace OneWorld.Services
         private readonly IRefreshTokenRepo _refreshTokenRepo;
         private readonly LinkGenerator _linkGenerator;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly AppDbContext _appDbContext;
 
         public AccountRepo(ILogger<AccountRepo> logger,
             UserManager<ApplicationUser> userManager,
@@ -37,7 +39,8 @@ namespace OneWorld.Services
             CookieConfiguration cookieConfiguration,
             IRefreshTokenRepo refreshTokenRepo,
             LinkGenerator linkGenerator,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            AppDbContext appDbContext)
         {
             _logger = logger;
             _userManager = userManager;
@@ -47,6 +50,7 @@ namespace OneWorld.Services
             _refreshTokenRepo = refreshTokenRepo;
             _linkGenerator = linkGenerator;
             _httpContextAccessor = httpContextAccessor;
+            _appDbContext = appDbContext;
         }
 
         public async Task<AccountLoginResponse> LoginAsync(AccountLoginVM model)
@@ -174,6 +178,27 @@ namespace OneWorld.Services
 
             var result = await _userManager.ConfirmEmailAsync(user, token.DecodedString);
             return !result.Succeeded ? new DecodeResult() {Errors = new[] {"Invalid Token."}} : new DecodeResult(true);
+        }
+
+        public async Task<BaseErrorSuccess> ForgotPasswordAsync(AccountForgotPasswordVM model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.EmailAddress);
+            if (user is null)
+                return new BaseErrorSuccess() {Errors = new[] {"Email Address Not Found."}};
+
+            if (string.IsNullOrWhiteSpace(user.PasswordHash))
+            {
+                return new DecodeResult()
+                    {Errors = new[] {"User Not Registered with Email. Please Login Using Providers."}};
+            }
+
+            return new DecodeResult();
+        }
+
+        public async Task<BaseErrorSuccess> LogoutAsync(LogoutRequest model)
+        {
+            var result = await _refreshTokenRepo.DeleteRefreshTokenByRefreshTokenAsync(model.RT);
+            return new BaseErrorSuccess(result);
         }
 
         public async Task<AccountLoginResponse> GenerateJWTTokenAsync(ApplicationUser user)

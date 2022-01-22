@@ -34,5 +34,18 @@ namespace OneWorld.Services
             await _appDbContext.SaveChangesAsync();
             return refreshToken;
         }
+
+        public async Task<bool> DeleteRefreshTokenByRefreshTokenAsync(string RefreshToken)
+        {
+            var RefToken = await _appDbContext.RefreshTokens.FirstOrDefaultAsync(x => x.RefToken == RefreshToken);
+            if (RefToken is not null)
+            {
+                _appDbContext.RefreshTokens.Remove(RefToken);
+                await _appDbContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
     }
 }

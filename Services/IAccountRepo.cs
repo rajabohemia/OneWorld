@@ -15,5 +15,7 @@ namespace OneWorld.Services
         Task<AccountLoginResponse> RefreshTokenAsync(RefreshTokenRequest model);
         Task<AccountRegisterResult> RegisterAsync(AccountRegisterVM model);
         Task<BaseErrorSuccess> ConfirmEmailAsync(string email, string base64Token);
+        Task<BaseErrorSuccess> ForgotPasswordAsync(AccountForgotPasswordVM model);
+        Task<BaseErrorSuccess> LogoutAsync(LogoutRequest model);
     }
 }

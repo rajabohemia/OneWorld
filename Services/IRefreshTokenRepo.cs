@@ -8,5 +8,6 @@ namespace OneWorld.Services
         Task<RefreshToken> AddAsync(RefreshToken refreshToken);
         Task<RefreshToken> GetByRefreshTokenAsync(string refreshToken);
         Task<RefreshToken> DeleteRefreshTokenAsync(RefreshToken refreshToken);
+        Task<bool> DeleteRefreshTokenByRefreshTokenAsync(string RefreshToken);
     }
 }
