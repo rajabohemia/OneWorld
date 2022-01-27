@@ -49,14 +49,14 @@ namespace OneWorld.Migrations
                         new
                         {
                             Id = "730C3F0F-F86C-4DE9-86A6-29A2B445DB36",
-                            ConcurrencyStamp = "cb3abf1b-75c7-4716-ac19-9e054ca46ffe",
+                            ConcurrencyStamp = "b1293afc-eb99-4e25-8838-16dc4ffab527",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = "5FC21AEE-2353-4E9E-A534-45881E47D7A5",
-                            ConcurrencyStamp = "724340ad-1bb6-496c-be92-10b6f43284ac",
+                            ConcurrencyStamp = "fb9bc5c6-d4e8-4c65-80fc-e3d2be24971e",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -247,7 +247,7 @@ namespace OneWorld.Migrations
                         {
                             Id = "A6AE190D-3A8C-4CEF-BE35-2DEF2A582408",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "419732a8-c249-4e89-999d-7e991ec214ec",
+                            ConcurrencyStamp = "c690639e-786f-454f-988a-437b81dddc05",
                             DateStamp = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "hackstr@outlook.com",
                             EmailConfirmed = true,
@@ -256,7 +256,7 @@ namespace OneWorld.Migrations
                             NormalizedUserName = "HACKSTR@OUTLOOK.COM",
                             PasswordHash = "AQAAAAEAACcQAAAAEAy+lJePIeTEdC3QC4t8ZaN0ClmMfy/AhIawuSv7qqoXt2soGwABBcsGSViwxGu+tg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "e710391e-7c2c-459f-a7f3-f1e332635c55",
+                            SecurityStamp = "10d50e38-6214-4b05-918d-157015bf0d98",
                             TwoFactorEnabled = false,
                             UserName = "hackstr@outlook.com"
                         });
@@ -294,6 +294,57 @@ namespace OneWorld.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("RefreshTokens");
+                });
+
+            modelBuilder.Entity("OneWorld.Models.Service", b =>
+                {
+                    b.Property<Guid>("ServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<DateTime>("DateStamp")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2")
+                        .HasDefaultValueSql("GETDATE()");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Icon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ServiceName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ShortDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ServiceId");
+
+                    b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("OneWorld.Models.Servicefaq", b =>
+                {
+                    b.Property<Guid>("ServicefaqId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ServiceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ServicefaqId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("Servicefaqs");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -354,6 +405,22 @@ namespace OneWorld.Migrations
                         .HasForeignKey("UserId");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("OneWorld.Models.Servicefaq", b =>
+                {
+                    b.HasOne("OneWorld.Models.Service", "Service")
+                        .WithMany("Servicefaqs")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Service");
+                });
+
+            modelBuilder.Entity("OneWorld.Models.Service", b =>
+                {
+                    b.Navigation("Servicefaqs");
                 });
 #pragma warning restore 612, 618
         }

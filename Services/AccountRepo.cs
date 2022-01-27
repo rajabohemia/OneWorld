@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using OneWorld.Areas.Admin.ViewModels;
 using OneWorld.Configurations;
 using OneWorld.DTO;
 using OneWorld.DTO.Request;
@@ -199,6 +200,41 @@ namespace OneWorld.Services
         {
             var result = await _refreshTokenRepo.DeleteRefreshTokenByRefreshTokenAsync(model.RT);
             return new BaseErrorSuccess(result);
+        }
+
+        public async Task<EmailUrlResult> ResendEmailConfirmationAsync(AccountResendEmailConfirmation model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.EmailAddress);
+            if (user is null)
+                return new EmailUrlResult() {Errors = new[] {"User Not Found"}};
+            if (user.EmailConfirmed)
+                return new EmailUrlResult() {Errors = new[] {"Email Already Confirmed."}};
+
+            return await generateEmailConfimationUrl(user);
+        }
+
+        public async Task<BaseErrorSuccess> ChangePasswordAsync(AccountChangePasswordVM model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email);
+            if (user is null)
+                return new DecodeResult() {Errors = new[] {"User Not Found."}};
+
+            var changePasswordResult = await
+                _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!changePasswordResult.Succeeded)
+                return new DecodeResult() {Errors = changePasswordResult.Errors.Select(x => x.Description)};
+
+            return new DecodeResult(true);
+        }
+
+        private async Task<EmailUrlResult> generateEmailConfimationUrl(ApplicationUser user)
+        {
+            var emailVerificationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            var encodedToken = MiscActions.Encode64(emailVerificationToken);
+            var confirmationUrl = _linkGenerator.GetUriByAction(_httpContextAccessor.HttpContext, "ConfirmEmail",
+                "Account", new {token = encodedToken, email = user.Email, area = ""},
+                _httpContextAccessor.HttpContext.Request.Scheme);
+            return new EmailUrlResult(true) {EmailConfirmationUrl = confirmationUrl};
         }
 
         public async Task<AccountLoginResponse> GenerateJWTTokenAsync(ApplicationUser user)

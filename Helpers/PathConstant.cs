@@ -21,6 +21,8 @@ namespace OneWorld.Helpers
             public const string RefreshToken = "Account/RefreshToken";
             public const string ConfirmEmail = "Account/ConfirmEmail";
             public const string Logout = "Account/Logout";
+            public const string ForgotPassword = "Account/ForgotPassword";
+            public const string ChangePassword = "Account/ChangePassword";
         }
         
         public static class cookies

@@ -24,6 +24,10 @@ namespace OneWorld.Models
             builder.Entity<RefreshToken>().Property(x => x.AddedDate).HasDefaultValueSql(defaultdate);
             builder.Entity<RefreshToken>().Property(x => x.Id).HasDefaultValueSql(seqid);
 
+            //Service
+            builder.Entity<Service>().Property(x => x.ServiceId).HasDefaultValueSql(seqid);
+            builder.Entity<Service>().Property(x => x.DateStamp).HasDefaultValueSql(defaultdate);
+            
         }
 
         private void SeedAdmin(ModelBuilder builder)
@@ -69,5 +73,7 @@ namespace OneWorld.Models
         }
         
         public DbSet<RefreshToken> RefreshTokens { get; set; }
+        public DbSet<Service> Services { get; set; }
+        public DbSet<Servicefaq> Servicefaqs { get; set; }
     }
 }

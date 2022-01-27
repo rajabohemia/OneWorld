@@ -1,18 +1,18 @@
-﻿@model AccountForgotPasswordVM
+﻿@model AccountResendEmailConfirmation
+
 @{
-    ViewBag.Title = "Forgot Password";
+    ViewBag.Title = "title";
     Layout = "_AccountLayout";
-    var color = (ViewData["success"] != null) ? "alert-success" : "alert-danger";
 }
 
 <!-- Left Text-->
 <div class="d-none d-lg-flex col-lg-8 align-items-center p-5">
     <div class="w-100 d-lg-flex align-items-center justify-content-center px-5">
-        <img class="img-fluid" src="/app-assets/images/pages/forgot-password-v2-dark.svg" alt="Forgot password V2"/>
+        <img class="img-fluid" src="/app-assets/images/pages/reset-password-v2-dark.svg" alt="Register V2"/>
     </div>
 </div>
 <!-- /Left Text-->
-<!-- Forgot password-->
+
 <div class="d-flex col-lg-4 align-items-center auth-bg px-2 p-lg-5">
     <div class="col-12 col-sm-8 col-md-6 col-lg-12 px-xl-2 mx-auto">
         <h2 class="card-title fw-bold mb-1">Forgot Password? 🔒</h2>
@@ -26,7 +26,7 @@
             <button type="submit" class="btn btn-primary w-100" tabindex="2">Send reset link</button>
             @if (!ViewData.ModelState.IsValid)
             {
-                <div asp-validation-summary="All" class="alert @color mt-2 p-1"></div>
+                <div asp-validation-summary="All" class="alert alert-danger mt-2 p-1"></div>
             }
         </form>
         <p class="text-center mt-2">
@@ -34,19 +34,3 @@
         </p>
     </div>
 </div>
-<!-- /Forgot password-->
-
-@section Styles
-{
-    <style>
-        .toast-top-right{
-        padding-top: 10px;
-        }
-    </style>
-}
-
-@section Scripts
-{
-    @await Component.InvokeAsync("NToastNotify")
-    <partial name="_Validate"/>
-}

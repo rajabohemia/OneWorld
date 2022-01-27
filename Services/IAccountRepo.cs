@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using OneWorld.Areas.Admin.ViewModels;
 using OneWorld.DTO;
 using OneWorld.DTO.Request;
 using OneWorld.DTO.Response;
@@ -17,5 +18,7 @@ namespace OneWorld.Services
         Task<BaseErrorSuccess> ConfirmEmailAsync(string email, string base64Token);
         Task<BaseErrorSuccess> ForgotPasswordAsync(AccountForgotPasswordVM model);
         Task<BaseErrorSuccess> LogoutAsync(LogoutRequest model);
+        Task<EmailUrlResult> ResendEmailConfirmationAsync(AccountResendEmailConfirmation model);
+        Task<BaseErrorSuccess> ChangePasswordAsync(AccountChangePasswordVM model);
     }
 }

@@ -7,8 +7,6 @@
 
     <ItemGroup>
       <Folder Include="Areas\Admin\Controllers" />
-      <Folder Include="Areas\Admin\Data" />
-      <Folder Include="Areas\Admin\Models" />
       <Folder Include="Areas\API\Controllers\v1" />
       <Folder Include="Areas\API\Controllers\v2" />
       <Folder Include="Areas\API\Models" />
@@ -42,9 +40,18 @@
       <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="5.0.2" />
       <PackageReference Include="NToastNotify" Version="7.0.0" />
       <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0" />
+      <PackageReference Include="SixLabors.ImageSharp.Web" Version="1.0.5" />
       <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.2.3" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.3" />
       <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.2.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="Web.config">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

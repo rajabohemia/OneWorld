@@ -11,7 +11,7 @@ namespace OneWorld.Services
         {
             _logger = logger;
         }
-        
+
         public async Task<bool> SendEmailConfirmationAsync(string email, string url)
         {
             _logger.LogCritical(url);

@@ -44,6 +44,9 @@ namespace OneWorld
                 options.SignIn.RequireConfirmedEmail = true;
             }).AddEntityFrameworkStores<AppDbContext>().AddDefaultTokenProviders();
 
+            //Imagesharp Middleware
+            services.AddCustomImageSharp();
+
             //Configure LowerCase Urls
             services.ConfigureApplicationCookie(options =>
             {
@@ -98,6 +101,7 @@ namespace OneWorld
             }
 
             app.UseHttpsRedirection();
+            app.UseCustomImageSharp();
             app.UseStaticFiles();
 
             app.UseRouting();
